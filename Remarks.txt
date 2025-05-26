@@ -1,0 +1,74 @@
+EnvSettings is an optional class module you might use to store environment-specific settings (like API URL and token) in a neat, object-oriented way.
+
+Why use an EnvSettings class?
+You keep related information together (e.g., API endpoint, token, etc. for each environment).
+Your code is clearer and easier to maintain.
+It’s especially useful if you have many environment-specific parameters.
+How to Create the EnvSettings Class
+In the VBA editor:
+
+Insert > Class Module
+Rename it to EnvSettings (in the Properties window, bottom left).
+Paste this code in the EnvSettings class:
+
+vba
+
+Copy
+' EnvSettings.cls
+Option Explicit
+
+Private pApiUrl As String
+Private pApiToken As String
+
+Public Property Get ApiUrl() As String
+    ApiUrl = pApiUrl
+End Property
+Public Property Let ApiUrl(Value As String)
+    pApiUrl = Value
+End Property
+
+Public Property Get ApiToken() As String
+    ApiToken = pApiToken
+End Property
+Public Property Let ApiToken(Value As String)
+    pApiToken = Value
+End Property
+You can add more properties if you need more configuration per environment.
+
+How to Use EnvSettings in Your Modules
+In modConfig for example:
+
+vba
+
+Copy
+Dim Envs As Object ' Scripting.Dictionary
+
+Sub InitEnvs()
+    Set Envs = CreateObject("Scripting.Dictionary")
+
+    Dim dev As New EnvSettings
+    dev.ApiUrl = "https://dev-api.example.com/api/save"
+    dev.ApiToken = "dev-token-here"
+
+    Dim uat As New EnvSettings
+    uat.ApiUrl = "https://uat-api.example.com/api/save"
+    uat.ApiToken = "uat-token-here"
+
+    Envs.Add "DEV", dev
+    Envs.Add "UAT", uat
+End Sub
+
+Function GetEnvSettings(env As String) As EnvSettings
+    If Envs Is Nothing Then InitEnvs
+    Set GetEnvSettings = Envs(env)
+End Function
+Is It Required?
+No, it’s not required.
+If you want to keep things simple, you can just use a Type or a Dictionary instead.
+But using a class makes the code more robust and readable, especially as your settings grow.
+
+Summary Table:
+Class Module	Purpose	Required?
+EnvSettings	Store env-specific configuration	Optional
+If you want a full copy-paste version of all code using the class, let me know!
+You can also skip the class and just use a Type or Dictionary if you prefer simplicity.
